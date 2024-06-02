@@ -25,12 +25,12 @@ pub async fn job(event_source: LogSource, event: LogEntry) {
     // todo: read sleep duration from the job
 
     // sleep 30s
-    // let interval = std::time::Duration::from_secs(30);
-    // let do_it_now = false;
-    // ic_cdk::println!("Starting a periodic task with interval {interval:?}");
-    // ic_cdk_timers::set_timer(interval, || {
-    //     do_it_now = true;
-    // });
+    let interval = std::time::Duration::from_secs(30);
+    let do_it_now = false;
+    ic_cdk::println!("Starting a periodic task with interval {interval:?}");
+    ic_cdk_timers::set_timer(interval, || {
+        submit_result(U256::from(0)).await;
+    });
 
     // loop {
     //     _ = &mut do_it_now => {
@@ -50,10 +50,10 @@ pub async fn job(event_source: LogSource, event: LogEntry) {
     //     ic_cdk::println!("Waking up");
     // });
 
-    println!("Running job now, because we have been called by the blockchain.");
+    //println!("Running job now, because we have been called by the blockchain.");
 
     // todo: pass job_id from log
-    submit_result(U256::from(0)).await;
+    //submit_result(U256::from(0)).await;
     println!("Successfully ran job #{:?}", 0);
 }
 

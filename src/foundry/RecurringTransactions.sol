@@ -155,10 +155,9 @@ contract RecurringTransactions {
 
         // update the last execution timestamp. We assume perfect execution
         // timing in order to avoid execution delays to add up over time
-        _job.lastExecution += _job.period;
-        jobs[_job_id] = _job;
+        jobs[_job_id].lastExecution = _job.lastExecution + _job.period;
 
         // order next execution
-        emit NextExecutionTimestamp(_job.lastExecution + _job.period, _job_id);
+        emit NextExecutionTimestamp(jobs[_job_id].lastExecution, _job_id);
     }
 }

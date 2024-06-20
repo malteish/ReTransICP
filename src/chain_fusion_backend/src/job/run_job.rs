@@ -9,8 +9,7 @@ use crate::{
 };
 use ethers_core::abi::AbiEncode;
 
-// todo: properly name this function
-pub async fn submit_result(job_id: U256) {
+pub async fn run_job(job_id: U256) {
     println! {"Submitting result for job_id: {job_id}"};
     let function_signature = "executeJob(uint256)";
 

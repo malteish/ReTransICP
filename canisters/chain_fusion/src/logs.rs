@@ -22,12 +22,14 @@ async fn process_logs() {
         Ok(guard) => guard,
         Err(_) => return,
     };
+    ic_cdk::println!("Processing logs: starting");
 
     let logs_to_process = read_state(|s| (s.logs_to_process.clone()));
 
     for (event_source, event) in logs_to_process {
         job(event_source, event).await
     }
+    ic_cdk::println!("Processing logs: done");
 }
 
 pub async fn get_logs(from: &Nat, to: &Nat) -> GetLogsResult {
@@ -55,7 +57,7 @@ pub async fn get_logs(from: &Nat, to: &Nat) -> GetLogsResult {
     }
 }
 
-/// Scraps Ethereum logs between `from` and `min(from + MAX_BLOCK_SPREAD, to)` since certain RPC providers
+/// Scrapes Ethereum logs between `from` and `min(from + MAX_BLOCK_SPREAD, to)` since certain RPC providers
 /// require that the number of blocks queried is no greater than MAX_BLOCK_SPREAD.
 /// Returns the last block number that was scraped (which is `min(from + MAX_BLOCK_SPREAD, to)`) if there
 /// was no error when querying the providers, otherwise returns `None`.
@@ -132,6 +134,8 @@ pub async fn scrape_eth_logs() {
         Err(_) => return,
     };
 
+    ic_cdk::println!("Scraping logs: starting");
+
     let last_block_number = match update_last_observed_block_number().await {
         Some(block_number) => block_number,
         None => {
@@ -154,6 +158,7 @@ pub async fn scrape_eth_logs() {
                 }
             };
     }
+    ic_cdk::println!("Scraping logs: done");
 }
 
 pub async fn update_last_observed_block_number() -> Option<Nat> {

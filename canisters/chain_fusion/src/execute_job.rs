@@ -12,6 +12,7 @@ pub async fn execute_jobs() {
         Ok(guard) => guard,
         Err(_) => return,
     };
+    ic_cdk::println!("Executing jobs: starting");
 
     // check if all logs have been processed
     let logs_to_process = read_state(|s| (s.logs_to_process.clone()));
@@ -19,12 +20,16 @@ pub async fn execute_jobs() {
         ic_cdk::println!("Skipping execution of jobs because there are logs to process");
         return;
     }
+    // Log the size of job_execution_times in state
+    let job_execution_times_size = read_state(|s| s.job_execution_times.len());
+    ic_cdk::println!("Number of jobs in queue: {}", job_execution_times_size);
 
     // check if there are any jobs to execute, and execute them if they are ready
     let current_timestamp = api::time() / 1_000_000_000; // converted to seconds
     let mut jobs_executed = 0;
     loop {
         let earliest_job = read_state(|s| s.get_earliest_job());
+        ic_cdk::println!("Earliest job: {:?}", earliest_job);
         match earliest_job {
             Some((job_id, job_execution_time)) if job_execution_time <= current_timestamp => {
                 ic_cdk::println!("Executing job with ID: {:?}", job_id);

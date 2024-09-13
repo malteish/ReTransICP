@@ -62,7 +62,23 @@ contract MyScript is Script {
             address(token)
         );
 
-        console.log("Job created");
+        recurringTransactions.createJob{value: 0.15 ether}(
+            15, // delay in seconds
+            15, // number of executions
+            0.15 ether, // assuming 18 decimals here
+            receiverAddress, // hardhat account 1
+            address(token)
+        );
+
+        recurringTransactions.createJob{value: 0.18 ether}(
+            18, // delay in seconds
+            18, // number of executions
+            0.18 ether, // assuming 18 decimals here
+            receiverAddress, // hardhat account 1
+            address(token)
+        );
+
+        console.log("Jobs created");
 
         vm.stopBroadcast();
     }

@@ -7,8 +7,8 @@ use crate::guard::TimerGuard;
 use crate::state::{mutate_state, read_state, State, TaskType};
 
 pub async fn execute_jobs() {
-    // the timer guard prevent simultaneous execution of multiple instances of the same task
-    let _guard = match TimerGuard::new(TaskType::ExecuteJobs) {
+    // do not execute jobs if logs are still being processed and vice versa
+    let _guard = match TimerGuard::new(TaskType::ProcessLogs) {
         Ok(guard) => guard,
         Err(_) => return,
     };

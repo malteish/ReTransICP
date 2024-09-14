@@ -1,5 +1,3 @@
-use ic_cdk::api;
-
 use std::{
     cmp::{min, Ordering},
     ops::{Add, Div, Sub},
@@ -15,7 +13,6 @@ use ic_cdk::println;
 
 use crate::{
     guard::TimerGuard,
-    job::execute_job,
     job::job,
     state::{mutate_state, read_state, State, TaskType},
 };
@@ -25,12 +22,14 @@ async fn process_logs() {
         Ok(guard) => guard,
         Err(_) => return,
     };
+    ic_cdk::println!("Processing logs: starting");
 
     let logs_to_process = read_state(|s| (s.logs_to_process.clone()));
 
     for (event_source, event) in logs_to_process {
         job(event_source, event).await
     }
+    ic_cdk::println!("Processing logs: done");
 }
 
 pub async fn get_logs(from: &Nat, to: &Nat) -> GetLogsResult {
@@ -58,7 +57,7 @@ pub async fn get_logs(from: &Nat, to: &Nat) -> GetLogsResult {
     }
 }
 
-/// Scraps Ethereum logs between `from` and `min(from + MAX_BLOCK_SPREAD, to)` since certain RPC providers
+/// Scrapes Ethereum logs between `from` and `min(from + MAX_BLOCK_SPREAD, to)` since certain RPC providers
 /// require that the number of blocks queried is no greater than MAX_BLOCK_SPREAD.
 /// Returns the last block number that was scraped (which is `min(from + MAX_BLOCK_SPREAD, to)`) if there
 /// was no error when querying the providers, otherwise returns `None`.
@@ -135,6 +134,8 @@ pub async fn scrape_eth_logs() {
         Err(_) => return,
     };
 
+    ic_cdk::println!("Scraping logs: starting");
+
     let last_block_number = match update_last_observed_block_number().await {
         Some(block_number) => block_number,
         None => {
@@ -157,21 +158,7 @@ pub async fn scrape_eth_logs() {
                 }
             };
     }
-
-    // if we reach this point, we have successfully scraped all the logs up to the last observed block
-    // we can now check if there are any jobs to execute
-    let current_timestamp = api::time() / 1_000_000_000; // converted to seconds
-    let earliest_job = read_state(|s| s.get_earliest_job());
-    if let Some((job_id, job_execution_time)) = earliest_job {
-        if job_execution_time <= current_timestamp {
-            ic_cdk::println!("Executing job with ID: {:?}", job_id);
-            execute_job(job_id).await;
-            mutate_state(|s| s.remove_job(&job_id)); // remove the job from the queue
-            ic_cdk::println!("Executed job with ID: {:?}", job_id);
-        }
-    } else {
-        ic_cdk::println!("No jobs to execute");
-    }
+    ic_cdk::println!("Scraping logs: done");
 }
 
 pub async fn update_last_observed_block_number() -> Option<Nat> {

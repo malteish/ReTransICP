@@ -31,7 +31,7 @@ root.render(
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           theme={darkTheme({
-            accentColor: "#7b3fe4",
+            accentColor: "rgb(240, 53, 212)",
           })}
         >
           <App />

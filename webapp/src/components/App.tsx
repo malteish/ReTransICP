@@ -5,6 +5,7 @@ import { Info } from "./Info";
 import ShowRecurringTransactions from "./ShowRecurringTransactions";
 import { StopRecurringTransaction } from "./StopRecurringTransaction";
 import { Welcome } from "./Welcome";
+import RecurringTransactionsList from "./RecurringTransactionsList";
 
 const App = () => {
   const {
@@ -80,6 +81,11 @@ const App = () => {
           writeContractIsError={writeContractIsError}
           writeContractIsPending={writeContractIsPending}
           writeContractError={writeContractError}
+        />
+
+        <RecurringTransactionsList
+          address={address}
+          isConnected={isConnected}
         />
 
         <ShowRecurringTransactions

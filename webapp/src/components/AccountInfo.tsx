@@ -24,8 +24,6 @@ export function AccountInfo() {
     args: [address, RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS],
   });
 
-  console.log("allowanceData", allowanceData);
-
   return (
     <>
       <div className="description-text">
@@ -46,7 +44,11 @@ export function AccountInfo() {
         <br />
         The recurring transactions smart contract is allowed to transfer this
         many of your EURe tokens:{" "}
-        <b>{allowanceData ? allowanceData.toString() : "0"}</b>
+        <b>
+          {!allowanceIsLoading && !allowanceIsError
+            ? (allowanceData as number).toString() // Assuming allowanceData is a number
+            : "loading..."}
+        </b>
       </div>
     </>
   );

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-
+import { readContract } from "wagmi/actions"; // Updated import
+import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
+import { RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS } from "../utils/constants";
+import { Config } from "wagmi";
 interface RecurringTransaction {
   id: string;
   recipient: string;
@@ -10,13 +13,15 @@ interface RecurringTransaction {
 }
 
 interface RecurringTransactionsListProps {
-  address: string;
+  address: `0x${string}` | undefined;
   isConnected: boolean;
+  config: Config;
 }
 
 const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
   address,
   isConnected,
+  config,
 }) => {
   const [transactions, setTransactions] = useState<RecurringTransaction[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,16 +36,39 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
   const fetchRecurringTransactions = async () => {
     setLoading(true);
     setError(null);
+
+    console.log("config", config);
     try {
-      // Replace with your API endpoint or blockchain call
-      const response = await fetch(
-        `/api/recurring-transactions?address=${address}`
+      // Call the jobsForAddress function with address and index 0
+      const jobNumber = await readContract(
+        config,
+        {
+          address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, // Ensure this constant is defined
+          abi: recurringTransactionsSmartContract.abi, // ABI of the contract
+          functionName: "jobsForAddress",
+          args: [address, 0],
+        }
+        /** Add the required second argument, such as the chain ID */
+        // Replace `1` with your target chain ID
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch recurring transactions.");
-      }
-      const data: RecurringTransaction[] = await response.json();
-      setTransactions(data);
+
+      console.log("Job Count:", jobNumber);
+
+      //   // For demonstration, we'll just set a dummy transaction based on jobCount
+      //   // You can modify this part based on your actual contract's response structure
+      //   if (localJobCount > 0) {
+      //     const dummyTransaction: RecurringTransaction = {
+      //       id: "1",
+      //       recipient: "0xRecipientAddress",
+      //       amount: "1000",
+      //       period: "Monthly",
+      //       executions: localJobCount,
+      //       nextExecution: "2024-05-01",
+      //     };
+      //     setTransactions([dummyTransaction]);
+      //   } else {
+      //     setTransactions([]);
+      //   }
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     } finally {

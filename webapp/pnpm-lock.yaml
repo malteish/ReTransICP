@@ -29,6 +29,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.0
+      '@wagmi/core':
+        specifier: ^2.13.5
+        version: 2.13.5(@tanstack/query-core@5.38.0)(@types/react@18.3.3)(immer@9.0.21)(react@18.3.1)(typescript@5.4.2)(viem@2.12.5(bufferutil@4.0.8)(typescript@5.4.2))
       axios:
         specifier: ^1.7.2
         version: 1.7.5
@@ -2093,6 +2096,18 @@ packages:
 
   '@wagmi/core@2.10.4':
     resolution: {integrity: sha512-X/PW4zckkSQ/y4LwkQ5cwLKv551I6kVorH3VsTQghxYt0Vj9K5/XhCCRQg5Q200u6fiUCJ+2WjpmhZu3XYNU9w==}
+    peerDependencies:
+      '@tanstack/query-core': '>=5.0.0'
+      typescript: '>=5.0.4'
+      viem: 2.x
+    peerDependenciesMeta:
+      '@tanstack/query-core':
+        optional: true
+      typescript:
+        optional: true
+
+  '@wagmi/core@2.13.5':
+    resolution: {integrity: sha512-lvX/hApJTSA/H2kOklokjIYiUpnT8CpBH80GeOiKxU0CGK1wNHTu20GRTCy0GF1t7jkNwPSG3m0SmnXmgYMmHw==}
     peerDependencies:
       '@tanstack/query-core': '>=5.0.0'
       typescript: '>=5.0.4'
@@ -5212,6 +5227,14 @@ packages:
 
   mipd@0.0.5:
     resolution: {integrity: sha512-gbKA784D2WKb5H/GtqEv+Ofd1S9Zj+Z/PGDIl1u1QAbswkxD28BQ5bSXQxkeBzPBABg1iDSbiwGG1XqlOxRspA==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  mipd@0.0.7:
+    resolution: {integrity: sha512-aAPZPNDQ3uMTdKbuO2YmAw2TxLHO0moa4YKAyETM/DTj5FloZo+a+8tU+iv4GmW+sOxKLSRwcSFuczk+Cpt6fg==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
@@ -10524,6 +10547,20 @@ snapshots:
       - utf-8-validate
       - zod
 
+  '@wagmi/core@2.13.5(@tanstack/query-core@5.38.0)(@types/react@18.3.3)(immer@9.0.21)(react@18.3.1)(typescript@5.4.2)(viem@2.12.5(bufferutil@4.0.8)(typescript@5.4.2))':
+    dependencies:
+      eventemitter3: 5.0.1
+      mipd: 0.0.7(typescript@5.4.2)
+      viem: 2.12.5(bufferutil@4.0.8)(typescript@5.4.2)
+      zustand: 4.4.1(@types/react@18.3.3)(immer@9.0.21)(react@18.3.1)
+    optionalDependencies:
+      '@tanstack/query-core': 5.38.0
+      typescript: 5.4.2
+    transitivePeerDependencies:
+      - '@types/react'
+      - immer
+      - react
+
   '@walletconnect/core@2.13.0(bufferutil@4.0.8)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
@@ -14681,6 +14718,10 @@ snapshots:
       - bufferutil
       - utf-8-validate
       - zod
+
+  mipd@0.0.7(typescript@5.4.2):
+    optionalDependencies:
+      typescript: 5.4.2
 
   mkdirp@0.5.6:
     dependencies:

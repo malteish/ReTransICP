@@ -6,6 +6,7 @@ import ShowRecurringTransactions from "./ShowRecurringTransactions";
 import { StopRecurringTransaction } from "./StopRecurringTransaction";
 import { Welcome } from "./Welcome";
 import RecurringTransactionsList from "./RecurringTransactionsList";
+import { useConfig } from "wagmi";
 
 const App = () => {
   const {
@@ -40,6 +41,8 @@ const App = () => {
     balanceIsLoading,
     balanceIsError,
   } = useConfiguration();
+
+  const config = useConfig();
 
   return (
     <div className="ds-container">
@@ -86,6 +89,7 @@ const App = () => {
         <RecurringTransactionsList
           address={address}
           isConnected={isConnected}
+          config={config}
         />
 
         <ShowRecurringTransactions

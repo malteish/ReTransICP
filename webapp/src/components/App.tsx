@@ -6,9 +6,6 @@ import RecurringTransactionsList from "./RecurringTransactionsList";
 import { useAccount, useConfig } from "wagmi";
 
 const App = () => {
-  const { address, isConnected } = useAccount();
-  const config = useConfig();
-
   return (
     <div className="ds-container">
       <div className="main-container">
@@ -21,14 +18,8 @@ const App = () => {
 
       <div className="steps-container">
         <Welcome />
-
         <CreateRecurringTransaction />
-
-        <RecurringTransactionsList
-          address={address}
-          isConnected={isConnected}
-          config={config}
-        />
+        <RecurringTransactionsList />
       </div>
       <Info />
     </div>

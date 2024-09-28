@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { readContract, writeContract } from "wagmi/actions"; // Updated import
 import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
 import { RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS } from "../utils/constants";
-import { Config } from "wagmi";
+import { Config, useAccount, useConfig } from "wagmi";
 
 interface RecurringTransactionProps {
   id: number;
@@ -79,22 +79,14 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
   );
 };
 
-interface RecurringTransactionsListProps {
-  address: `0x${string}` | undefined;
-  isConnected: boolean;
-  config: Config;
-}
-
-const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
-  address,
-  isConnected,
-  config,
-}) => {
+const RecurringTransactionsList: React.FC<{}> = ({}) => {
   const [transactions, setTransactions] = useState<RecurringTransactionProps[]>(
     []
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { address, isConnected } = useAccount();
+  const config = useConfig();
 
   useEffect(() => {
     if (isConnected && address) {

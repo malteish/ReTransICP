@@ -20,11 +20,7 @@ export function CreateRecurringTransaction() {
   const [showSuccessMsg, setShowSuccessMsg] = useState<boolean>(false);
 
   const { isConnected, address } = useAccount();
-  const {
-    data: balanceData,
-    isLoading: balanceIsLoading,
-    isError: balanceIsError,
-  } = useBalance({ address });
+
   const {
     writeContract,
     isPending: writeContractIsPending,

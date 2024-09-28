@@ -22,9 +22,7 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
   period,
   numberOfRemainingExecutions,
   lastExecution,
-  sender,
   recipient,
-  token,
   config,
 }) => {
   const [isPending, setIsPending] = useState(false);
@@ -58,7 +56,7 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
       <td>{numberOfRemainingExecutions.toString()}</td>
       <td>{lastExecution.toString()}</td>
       <td>
-        {numberOfRemainingExecutions !== 0 && (
+        {Number(numberOfRemainingExecutions) !== 0 && (
           <button onClick={handleStop} disabled={isPending}>
             {isPending ? "Stopping..." : "Stop"}
           </button>

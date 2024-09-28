@@ -39,36 +39,36 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
 
     console.log("config", config);
     try {
-      // Call the jobsForAddress function with address and index 0
-      const jobNumber = await readContract(
-        config,
-        {
-          address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, // Ensure this constant is defined
-          abi: recurringTransactionsSmartContract.abi, // ABI of the contract
-          functionName: "jobsForAddress",
-          args: [address, 0],
+      const jobs = [];
+      let index = 0;
+      while (true) {
+        try {
+          const jobNumber = await readContract(
+            config,
+            {
+              address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
+              abi: recurringTransactionsSmartContract.abi,
+              functionName: "jobsForAddress",
+              args: [address, index],
+            }
+            // Replace `1` with your target chain ID
+          );
+
+          jobs.push(jobNumber);
+          index++;
+        } catch (err: any) {
+          console.log(
+            "Reading job number reverted, assuming end of list:",
+            err
+          );
+          break;
         }
-        /** Add the required second argument, such as the chain ID */
-        // Replace `1` with your target chain ID
-      );
+      }
 
-      console.log("Job Count:", jobNumber);
+      console.log("Jobs:", jobs);
 
-      //   // For demonstration, we'll just set a dummy transaction based on jobCount
-      //   // You can modify this part based on your actual contract's response structure
-      //   if (localJobCount > 0) {
-      //     const dummyTransaction: RecurringTransaction = {
-      //       id: "1",
-      //       recipient: "0xRecipientAddress",
-      //       amount: "1000",
-      //       period: "Monthly",
-      //       executions: localJobCount,
-      //       nextExecution: "2024-05-01",
-      //     };
-      //     setTransactions([dummyTransaction]);
-      //   } else {
-      //     setTransactions([]);
-      //   }
+      // Process jobs array to set transactions
+      // Example: setTransactions(jobs.map(job => ({ ... })));
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     } finally {

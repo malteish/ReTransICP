@@ -59,12 +59,15 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
   isConnected,
   config,
 }) => {
-  const [transactions, setTransactions] = useState<RecurringTransaction[]>([]);
+  const [transactions, setTransactions] = useState<RecurringTransactionProps[]>(
+    []
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isConnected && address) {
+      setTransactions([]);
       fetchRecurringTransactions();
     }
   }, [isConnected, address]);
@@ -115,20 +118,9 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
         console.log("Job ID:", jobId);
         console.log("Transaction Details:", transaction);
 
-        const smartContractTransaction =
-          transaction as SmartContractTransaction;
-
         setTransactions((prevTransactions) => [
           ...prevTransactions,
-          new RecurringTransaction({
-            id: jobId,
-            recipient: smartContractTransaction.recipient,
-            amount: smartContractTransaction.amount,
-            period: smartContractTransaction.period,
-            numberOfRemainingExecutions:
-              smartContractTransaction.numberOfRemainingExecutions,
-            lastExecution: smartContractTransaction.lastExecution,
-          }),
+          transaction as RecurringTransactionProps,
         ]);
       }
 
@@ -178,8 +170,10 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
               recipient={tx.recipient}
               amount={tx.amount}
               period={tx.period}
-              executions={tx.executions}
-              nextExecution={tx.nextExecution}
+              numberOfRemainingExecutions={tx.numberOfRemainingExecutions}
+              lastExecution={tx.lastExecution}
+              sender={tx.sender}
+              token={tx.token}
             />
           ))}
         </tbody>

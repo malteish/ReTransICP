@@ -3,6 +3,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #16151A;
+  color: rgb(236, 229, 241);
+  /* Add this line to set the default text color to white */
 }
 
 .main-container {
@@ -17,7 +19,6 @@ body {
   justify-content: space-evenly;
   align-items: center;
   flex: 1 0 50%;
-  color: rgb(144, 121, 139);
 }
 
 .connect-btn {

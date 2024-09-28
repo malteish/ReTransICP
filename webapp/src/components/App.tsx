@@ -1,35 +1,18 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useConfiguration } from "../hooks/useConfiguration";
 import { CreateRecurringTransaction } from "./CreateRecurringTransaction";
 import { Info } from "./Info";
 import { Welcome } from "./Welcome";
 import RecurringTransactionsList from "./RecurringTransactionsList";
-import { useConfig } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
 
 const App = () => {
   const {
     address,
     isConnected,
-    handleRecipientChange,
-    handlePeriodChange,
-    handleAmountChange,
-    handleExecutionsChange,
-    createConfigAndProfile,
-    writeContractIsPending,
-    writeContractIsError,
-    writeContractError,
-    recipientError,
-    periodError: rpcError,
-    amountError: urlError,
-    ensInput,
-    period,
-    amount,
-    executions,
-    balanceData,
-    balanceIsLoading,
-    balanceIsError,
-  } = useConfiguration();
-
+    // balanceData,
+    // balanceIsLoading,
+    // balanceIsError,
+  } = useAccount();
   const config = useConfig();
 
   return (
@@ -44,7 +27,7 @@ const App = () => {
       </div>
 
       <div className="steps-container">
-        <Welcome
+        {/* <Welcome
           address={address}
           balance={
             balanceData
@@ -53,26 +36,9 @@ const App = () => {
           }
           balanceIsLoading={balanceIsLoading}
           balanceIsError={balanceIsError}
-        />
+        /> */}
 
-        <CreateRecurringTransaction
-          handleRecipientChange={handleRecipientChange}
-          handleAmountChange={handleAmountChange}
-          handlePeriodChange={handlePeriodChange}
-          handleExecutionsChange={handleExecutionsChange}
-          recipient={ensInput}
-          amount={amount}
-          period={period}
-          executions={executions}
-          recipientError={recipientError}
-          amountError={rpcError}
-          urlError={urlError}
-          createRecurringTransaction={createConfigAndProfile}
-          isConnected={isConnected}
-          writeContractIsError={writeContractIsError}
-          writeContractIsPending={writeContractIsPending}
-          writeContractError={writeContractError}
-        />
+        <CreateRecurringTransaction />
 
         <RecurringTransactionsList
           address={address}

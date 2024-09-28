@@ -91,29 +91,7 @@ const App = () => {
           isConnected={isConnected}
           config={config}
         />
-
-        <ShowRecurringTransactions
-          ensResolverFound={ensResolverFound}
-          hash={hash}
-          userProfile={userProfile}
-          profileAndKeysCreated={profileAndKeysCreated}
-          publishProfile={publishProfile}
-          writeContractError={writeContractError}
-          writeContractIsPending={writeContractIsPending}
-          userProfileError={userProfileError}
-          ensOwnershipError={ensOwnershipError}
-          userEns={userEns}
-          userEnsError={userEnsError}
-        />
-
-        <StopRecurringTransaction
-          profileAndKeysCreated={profileAndKeysCreated}
-          storeEnv={storeEnv}
-        />
       </div>
-
-      {/* <Docker /> */}
-
       <Info />
     </div>
   );

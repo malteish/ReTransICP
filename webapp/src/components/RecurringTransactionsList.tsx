@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { readContract } from "wagmi/actions"; // Updated import
+import { readContract, writeContract } from "wagmi/actions"; // Updated import
 import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
 import { RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS } from "../utils/constants";
 import { Config } from "wagmi";
@@ -13,6 +13,7 @@ interface RecurringTransactionProps {
   sender: `0x${string}`;
   recipient: `0x${string}`;
   token: `0x${string}`;
+  config: Config;
 }
 
 const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
@@ -24,7 +25,23 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
   sender,
   recipient,
   token,
+  config,
 }) => {
+  const handleStop = async () => {
+    try {
+      await writeContract(config, {
+        address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
+        abi: recurringTransactionsSmartContract.abi,
+        functionName: "deleteJob",
+        args: [id],
+      });
+      alert(`Job ${id} stopped successfully.`);
+    } catch (err) {
+      console.error("Failed to stop job:", err);
+      alert(`Failed to stop job ${id}.`);
+    }
+  };
+
   return (
     <tr>
       <td>{id.toString()}</td>
@@ -33,7 +50,9 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
       <td>{period.toString()}</td>
       <td>{numberOfRemainingExecutions.toString()}</td>
       <td>{lastExecution.toString()}</td>
-      <td>{`hi there ${id}`}</td>
+      <td>
+        <button onClick={handleStop}>Stop</button>
+      </td>
     </tr>
   );
 };
@@ -73,16 +92,12 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
       let index = 0;
       while (true) {
         try {
-          const jobNumber = await readContract(
-            config,
-            {
-              address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
-              abi: recurringTransactionsSmartContract.abi,
-              functionName: "jobsForAddress",
-              args: [address, index],
-            }
-            // Replace `1` with your target chain ID
-          );
+          const jobNumber = await readContract(config, {
+            address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
+            abi: recurringTransactionsSmartContract.abi,
+            functionName: "jobsForAddress",
+            args: [address, index],
+          });
 
           jobsIds.push(jobNumber);
           index++;
@@ -132,6 +147,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
             sender: typedTransaction[4] as `0x${string}`,
             recipient: typedTransaction[5] as `0x${string}`,
             token: typedTransaction[6] as `0x${string}`,
+            config: config,
           },
         ]);
       }
@@ -186,6 +202,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
               lastExecution={tx.lastExecution}
               sender={tx.sender}
               token={tx.token}
+              config={config}
             />
           ))}
         </tbody>

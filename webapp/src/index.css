@@ -154,3 +154,40 @@ body {
 [data-rk] {
   --rk-colors-connectButtonBackground: rgb(240, 53, 212) !important;
 }
+
+.recurring-transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 1em;
+  font-family: 'Arial', sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.recurring-transactions-table thead tr {
+  background-color: rgba(240, 53, 212, 0.498);
+  color: #ffffff;
+  text-align: left;
+}
+
+.recurring-transactions-table th,
+.recurring-transactions-table td {
+  padding: 12px 15px;
+}
+
+.recurring-transactions-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.recurring-transactions-table tbody tr:nth-of-type(even) {
+  background-color: #7b7a7a;
+}
+
+.recurring-transactions-table tbody tr:last-of-type {
+  border-bottom: 2px solid rgba(240, 53, 212, 0.498);
+}
+
+.recurring-transactions-table tbody tr:hover {
+  background-color: rgba(240, 53, 212, 0.278);
+}

@@ -50,12 +50,14 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
 
   return (
     <tr>
-      <td>{id.toString()}</td>
-      <td>{recipient}</td>
-      <td>{amount.toString()}</td>
-      <td>{period.toString()}</td>
-      <td>{numberOfRemainingExecutions.toString()}</td>
-      <td>{lastExecution.toString()}</td>
+      <th scope="row">{id.toString()}</th>
+      <td aria-label="Recipient">{recipient}</td>
+      <td aria-label="Amount">{amount.toString()}</td>
+      <td aria-label="Period">{period.toString()}</td>
+      <td aria-label="Remaining Executions">
+        {numberOfRemainingExecutions.toString()}
+      </td>
+      <td aria-label="Last Execution">{lastExecution.toString()}</td>
       {
         // compile job status
       }
@@ -200,7 +202,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
   return (
     <div className="recurring-transactions-list">
       <h2>Recurring Transactions</h2>
-      <table>
+      <table className="recurring-transactions-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -210,6 +212,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
             <th>Remaining Executions</th>
             <th>Last Execution</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>

@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/ReTransICP/static/css/main.1122a5ae.css",
-    "main.js": "/ReTransICP/static/js/main.38009e08.js",
+    "main.css": "/ReTransICP/static/css/main.e2a76557.css",
+    "main.js": "/ReTransICP/static/js/main.55430b15.js",
     "static/js/1458.6d8e4690.chunk.js": "/ReTransICP/static/js/1458.6d8e4690.chunk.js",
     "static/js/6037.27f42ef7.chunk.js": "/ReTransICP/static/js/6037.27f42ef7.chunk.js",
     "static/js/9835.808509bd.chunk.js": "/ReTransICP/static/js/9835.808509bd.chunk.js",
@@ -76,8 +76,8 @@
     "static/js/5760.993461b7.chunk.js": "/ReTransICP/static/js/5760.993461b7.chunk.js",
     "static/js/9118.db3e4ba8.chunk.js": "/ReTransICP/static/js/9118.db3e4ba8.chunk.js",
     "index.html": "/ReTransICP/index.html",
-    "main.1122a5ae.css.map": "/ReTransICP/static/css/main.1122a5ae.css.map",
-    "main.38009e08.js.map": "/ReTransICP/static/js/main.38009e08.js.map",
+    "main.e2a76557.css.map": "/ReTransICP/static/css/main.e2a76557.css.map",
+    "main.55430b15.js.map": "/ReTransICP/static/js/main.55430b15.js.map",
     "1458.6d8e4690.chunk.js.map": "/ReTransICP/static/js/1458.6d8e4690.chunk.js.map",
     "9835.808509bd.chunk.js.map": "/ReTransICP/static/js/9835.808509bd.chunk.js.map",
     "83.c9734bf9.chunk.js.map": "/ReTransICP/static/js/83.c9734bf9.chunk.js.map",
@@ -149,7 +149,7 @@
     "9118.db3e4ba8.chunk.js.map": "/ReTransICP/static/js/9118.db3e4ba8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.1122a5ae.css",
-    "static/js/main.38009e08.js"
+    "static/css/main.e2a76557.css",
+    "static/js/main.55430b15.js"
   ]
 }

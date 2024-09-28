@@ -3,17 +3,6 @@ import { readContract } from "wagmi/actions"; // Updated import
 import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
 import { RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS } from "../utils/constants";
 import { Config } from "wagmi";
-import { ethers } from "ethers"; // Add this import
-
-interface SmartContractTransaction {
-  period: number;
-  numberOfRemainingExecutions: number;
-  amount: number;
-  lastExecution: number;
-  sender: `0x${string}`;
-  recipient: `0x${string}`;
-  token: `0x${string}`;
-}
 
 interface RecurringTransactionProps {
   id: number;
@@ -38,12 +27,13 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
 }) => {
   return (
     <tr>
-      <td>{id}</td>
+      <td>{id.toString()}</td>
       <td>{recipient}</td>
-      <td>{amount}</td>
-      <td>{period}</td>
-      <td>{numberOfRemainingExecutions}</td>
-      <td>{lastExecution}</td>
+      <td>{amount.toString()}</td>
+      <td>{period.toString()}</td>
+      <td>{numberOfRemainingExecutions.toString()}</td>
+      <td>{lastExecution.toString()}</td>
+      <td>{`hi there ${id}`}</td>
     </tr>
   );
 };
@@ -77,7 +67,8 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
     setError(null);
     const jobsIds = [];
 
-    console.log("config", config);
+    // todo: maybe use useReadContracts instead of readContract? https://github.com/wevm/wagmi/discussions/2278
+
     try {
       let index = 0;
       while (true) {
@@ -104,8 +95,6 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
         }
       }
 
-      console.log("JobIdss:", jobsIds);
-
       // Process jobs array to set transactions
       for (const jobId of jobsIds) {
         const transaction = await readContract(config, {
@@ -118,9 +107,32 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
         console.log("Job ID:", jobId);
         console.log("Transaction Details:", transaction);
 
+        // Define the expected type of transaction
+        type Transaction = [
+          number,
+          number,
+          number,
+          number,
+          `0x${string}`,
+          `0x${string}`,
+          `0x${string}`
+        ];
+
+        // Cast transaction to the defined type
+        const typedTransaction = transaction as Transaction;
+
         setTransactions((prevTransactions) => [
           ...prevTransactions,
-          transaction as RecurringTransactionProps,
+          {
+            id: jobId as number,
+            amount: typedTransaction[2] as number,
+            period: typedTransaction[0] as number,
+            numberOfRemainingExecutions: typedTransaction[1] as number,
+            lastExecution: typedTransaction[3] as number,
+            sender: typedTransaction[4] as `0x${string}`,
+            recipient: typedTransaction[5] as `0x${string}`,
+            token: typedTransaction[6] as `0x${string}`,
+          },
         ]);
       }
 
@@ -158,8 +170,8 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
             <th>Recipient</th>
             <th>Amount</th>
             <th>Period</th>
-            <th>Executions</th>
-            <th>Next Execution</th>
+            <th>Remaining Executions</th>
+            <th>Last Execution</th>
           </tr>
         </thead>
         <tbody>

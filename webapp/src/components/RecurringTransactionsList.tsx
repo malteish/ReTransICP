@@ -27,18 +27,25 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
   token,
   config,
 }) => {
+  const [isPending, setIsPending] = useState(false);
+
   const handleStop = async () => {
     try {
+      setIsPending(true);
       await writeContract(config, {
         address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
         abi: recurringTransactionsSmartContract.abi,
         functionName: "removeJob",
         args: [id],
       });
-      alert(`Job ${id} stopped successfully.`);
+      setIsPending(false);
+      // todo: wait for tx to be mined and update the list
+      alert(
+        "Transaction sent to stop job. Please wait for confirmation and reload the page."
+      );
     } catch (err) {
       console.error("Failed to stop job:", err);
-      alert(`Failed to stop job ${id}.`);
+      alert(`Failed to stop job ${id}: ${err}`);
     }
   };
 
@@ -51,12 +58,11 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
       <td>{numberOfRemainingExecutions.toString()}</td>
       <td>{lastExecution.toString()}</td>
       <td>
-        <button
-          onClick={handleStop}
-          disabled={numberOfRemainingExecutions === 0}
-        >
-          Stop
-        </button>
+        {numberOfRemainingExecutions !== 0 && (
+          <button onClick={handleStop} disabled={isPending}>
+            {isPending ? "Stopping..." : "Stop"}
+          </button>
+        )}
       </td>
     </tr>
   );
@@ -81,7 +87,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
 
   useEffect(() => {
     if (isConnected && address) {
-      setTransactions([]);
+      setTransactions([]); // Clear transactions before fetching new ones
       fetchRecurringTransactions();
     }
   }, [isConnected, address]);
@@ -89,6 +95,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
   const fetchRecurringTransactions = async () => {
     setLoading(true);
     setError(null);
+    setTransactions([]); // Clear transactions before fetching new ones
     const jobsIds = [];
 
     // todo: maybe use useReadContracts instead of readContract? https://github.com/wevm/wagmi/discussions/2278
@@ -116,6 +123,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
       }
 
       // Process jobs array to set transactions
+      const newTransactions = [];
       for (const jobId of jobsIds) {
         const transaction = await readContract(config, {
           address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
@@ -141,23 +149,22 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
         // Cast transaction to the defined type
         const typedTransaction = transaction as Transaction;
 
-        setTransactions((prevTransactions) => [
-          ...prevTransactions,
-          {
-            id: jobId as number,
-            amount: typedTransaction[2] as number,
-            period: typedTransaction[0] as number,
-            numberOfRemainingExecutions: typedTransaction[1] as number,
-            lastExecution: typedTransaction[3] as number,
-            sender: typedTransaction[4] as `0x${string}`,
-            recipient: typedTransaction[5] as `0x${string}`,
-            token: typedTransaction[6] as `0x${string}`,
-            config: config,
-          },
-        ]);
+        newTransactions.push({
+          id: jobId as number,
+          amount: typedTransaction[2] as number,
+          period: typedTransaction[0] as number,
+          numberOfRemainingExecutions: typedTransaction[1] as number,
+          lastExecution: typedTransaction[3] as number,
+          sender: typedTransaction[4] as `0x${string}`,
+          recipient: typedTransaction[5] as `0x${string}`,
+          token: typedTransaction[6] as `0x${string}`,
+          config: config,
+        });
       }
 
-      console.log("Loaded transactions for ", address, ":", transactions);
+      setTransactions(newTransactions);
+
+      console.log("Loaded transactions for ", address, ":", newTransactions);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     } finally {

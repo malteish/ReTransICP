@@ -2,8 +2,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useConfiguration } from "../hooks/useConfiguration";
 import { CreateRecurringTransaction } from "./CreateRecurringTransaction";
 import { Info } from "./Info";
-import ShowRecurringTransactions from "./ShowRecurringTransactions";
-import { StopRecurringTransaction } from "./StopRecurringTransaction";
 import { Welcome } from "./Welcome";
 import RecurringTransactionsList from "./RecurringTransactionsList";
 import { useConfig } from "wagmi";
@@ -17,12 +15,7 @@ const App = () => {
     handleAmountChange,
     handleExecutionsChange,
     createConfigAndProfile,
-    profileAndKeysCreated,
-    storeEnv,
     writeContractIsPending,
-    publishProfile,
-    ensResolverFound,
-    hash,
     writeContractIsError,
     writeContractError,
     recipientError,
@@ -32,11 +25,6 @@ const App = () => {
     period,
     amount,
     executions,
-    userProfile,
-    userProfileError,
-    ensOwnershipError,
-    userEns,
-    userEnsError,
     balanceData,
     balanceIsLoading,
     balanceIsError,

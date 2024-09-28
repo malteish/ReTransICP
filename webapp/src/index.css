@@ -88,7 +88,10 @@ body {
 }
 
 .input-heading {
-  min-width: 5%;
+  min-width: 100%;
+  /* Ensure it takes full width */
+  margin-bottom: 0.2rem;
+  /* Add some space below the heading */
 }
 
 .input-heading-hidden {
@@ -101,14 +104,14 @@ body {
 }
 
 .input-container {
-  display: flex;
-  align-items: center;
+  display: block;
+  /* Change from flex to block */
   margin-top: 0.1rem;
 }
 
 .input-description {
   display: flex;
-  align-items: center;
+  align-items: left;
   margin-top: 0.4rem;
   font-size: 14px;
 }
@@ -150,4 +153,41 @@ body {
 /* changes rainbowkit button background color */
 [data-rk] {
   --rk-colors-connectButtonBackground: rgb(240, 53, 212) !important;
+}
+
+.recurring-transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 1em;
+  font-family: 'Arial', sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.recurring-transactions-table thead tr {
+  background-color: rgba(240, 53, 212, 0.498);
+  color: #ffffff;
+  text-align: left;
+}
+
+.recurring-transactions-table th,
+.recurring-transactions-table td {
+  padding: 12px 15px;
+}
+
+.recurring-transactions-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.recurring-transactions-table tbody tr:nth-of-type(even) {
+  background-color: #7b7a7a;
+}
+
+.recurring-transactions-table tbody tr:last-of-type {
+  border-bottom: 2px solid rgba(240, 53, 212, 0.498);
+}
+
+.recurring-transactions-table tbody tr:hover {
+  background-color: rgba(240, 53, 212, 0.278);
 }

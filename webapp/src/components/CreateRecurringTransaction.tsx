@@ -1,49 +1,111 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { useAccount, useWriteContract } from "wagmi";
+import eureTokenABI from "../contracts/EurE_v1.2.2.json";
+import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
+import {
+  EURE_SMART_CONTRACT_ADDRESS,
+  RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
+} from "../utils/constants";
 
-interface ConfigureProfileProps {
-  recipient: string;
-  period: string;
-  amount: string;
-  executions: string;
-  handleRecipientChange: (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => void;
-  handleAmountChange: (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => void;
-  handlePeriodChange: (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => void;
-  handleExecutionsChange: (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => void;
-  createRecurringTransaction: () => void;
-  recipientError: string | null;
-  amountError: string | null;
-  urlError: string | null;
-  isConnected: boolean;
-  writeContractIsError: boolean;
-  writeContractIsPending: boolean;
-  writeContractError: any;
-}
-
-export function CreateRecurringTransaction(props: ConfigureProfileProps) {
+export function CreateRecurringTransaction() {
+  const [recipient, setRecipient] = useState<string>("");
+  const [amount, setAmount] = useState<string>("");
+  const [period, setPeriod] = useState<string>("");
+  const [executions, setExecutions] = useState<string>("");
+  const [recipientError, setRecipientError] = useState<string | null>(null);
+  const [amountError, setAmountError] = useState<string | null>(null);
+  const [periodError, setPeriodError] = useState<string | null>(null);
+  const [executionsError, setExecutionsError] = useState<string | null>(null);
   const [showSuccessMsg, setShowSuccessMsg] = useState<boolean>(false);
 
-  const isDisabled =
-    !props.isConnected || !props.recipient.length || !props.amount.length
-      ? true
-      : false;
+  const { isConnected, address } = useAccount();
 
-  // show success message of profile creation for 3 seconds & then clears the msg from UI
-  //   useEffect(() => {
-  //     if (props.profile) {
-  //       setShowSuccessMsg(true);
-  //       setTimeout(() => {
-  //         setShowSuccessMsg(false);
-  //       }, 3000);
-  //     }
-  //   }, [props.profile]);
+  const {
+    writeContract,
+    isPending: writeContractIsPending,
+    isError: writeContractIsError,
+    error: writeContractError,
+    reset,
+  } = useWriteContract();
+
+  const handleRecipientChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setRecipient(event.target.value);
+    setRecipientError(null);
+  };
+
+  const handleAmountChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setAmount(event.target.value);
+    setAmountError(null);
+  };
+
+  const handlePeriodChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setPeriod(event.target.value);
+    setPeriodError(null);
+  };
+
+  const handleExecutionsChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setExecutions(event.target.value);
+    setExecutionsError(null);
+  };
+
+  const createRecurringTransaction = async () => {
+    const periodBigInt = BigInt(period);
+    const amountBigInt = BigInt(amount);
+    const recipientAddress = recipient;
+
+    if (!ethers.isAddress(recipient)) {
+      setRecipientError("Invalid recipient address");
+      console.log("Invalid recipient address");
+      return;
+    }
+
+    const totalAmount = amountBigInt * BigInt(executions);
+
+    writeContract({
+      address: EURE_SMART_CONTRACT_ADDRESS,
+      abi: eureTokenABI,
+      functionName: "approve",
+      args: [RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, totalAmount],
+    });
+
+    writeContract({
+      address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
+      abi: recurringTransactionsSmartContract.abi,
+      functionName: "createJob",
+      args: [
+        periodBigInt,
+        executions,
+        amountBigInt,
+        recipientAddress,
+        EURE_SMART_CONTRACT_ADDRESS,
+      ],
+      value: BigInt(1e16) * BigInt(executions),
+    });
+  };
+
+  useEffect(() => {
+    console.log("Account changed : ", address);
+    setRecipient("");
+    setPeriod("");
+    setAmount("");
+    setExecutions("");
+    setRecipientError(null);
+    setPeriodError(null);
+    setAmountError(null);
+    setExecutionsError(null);
+    reset();
+  }, [address]);
+
+  const isDisabled = !isConnected || !recipient.length || !amount.length;
 
   return (
     <div className="description-text step">
@@ -59,58 +121,49 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
       <div className="base-input-container">
         <div className="input-description">
           <span className="input-heading-hidden">Recipient</span>
-          {props.recipientError && (
-            <span className="error">{props.recipientError}</span>
-          )}
+          {recipientError && <span className="error">{recipientError}</span>}
         </div>
         <div className="input-container">
-          <span className="input-heading">Recipient address:</span>
+          <div className="input-heading">Recipient address:</div>
           <input
             className="input-field"
-            value={props.recipient}
-            onChange={(event) => props.handleRecipientChange(event)}
+            value={recipient}
+            onChange={handleRecipientChange}
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Recipient address::</span>
           The address that will receive the tokens you send
         </div>
       </div>
       <div className="base-input-container">
         <div className="input-description">
-          <span className="input-heading-hidden">Amount:</span>
-          {props.urlError && <span className="error">{props.urlError}</span>}
+          {amountError && <span className="error">{amountError}</span>}
         </div>
         <div className="input-container">
-          <span className="input-heading">Amount:</span>
+          <div className="input-heading">Amount:</div>
           <input
             className="input-field"
-            value={props.amount}
-            onChange={(event) => props.handleAmountChange(event)}
+            value={amount}
+            onChange={handleAmountChange}
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Amount:</span>
           How many tokens should be sent, in token bits.
         </div>
       </div>
       <div className="base-input-container">
         <div className="input-description">
-          <span className="input-heading-hidden">Period:</span>
-          {props.amountError && (
-            <span className="error">{props.amountError}</span>
-          )}
+          {periodError && <span className="error">{periodError}</span>}
         </div>
         <div className="input-container">
-          <span className="input-heading">Period:</span>
+          <div className="input-heading">Period:</div>
           <input
             className="input-field"
-            value={props.period}
-            onChange={(event) => props.handlePeriodChange(event)}
+            value={period}
+            onChange={handlePeriodChange}
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Period:</span>
           After which duration the tokens should be sent again (and again and
           again). In seconds.
         </div>
@@ -118,27 +171,22 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
       <div className="base-input-container">
         <div className="input-description">
           <span className="input-heading-hidden">Number of executions:</span>
-          {props.amountError && (
-            <span className="error">{props.amountError}</span>
-          )}
+          {executionsError && <span className="error">{executionsError}</span>}
         </div>
         <div className="input-container">
-          <span className="input-heading">Number of executions:</span>
+          <div className="input-heading">Number of executions:</div>
           <input
             className="input-field"
-            value={props.executions}
-            onChange={(event) => props.handleExecutionsChange(event)}
+            value={executions}
+            onChange={handleExecutionsChange}
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Number of executions:</span>
           Total number of times the transaction should be executed.
         </div>
       </div>
       <div className="base-input-container">
         <div className="input-description">
-          <span className="input-heading-hidden">Status:</span>
-
           {showSuccessMsg && (
             <span className="success">
               Recurring transaction created successfully!
@@ -151,19 +199,18 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
               isDisabled ? "disabled-btn" : ""
             )}
             disabled={isDisabled}
-            onClick={() => props.createRecurringTransaction()}
+            onClick={createRecurringTransaction}
           >
             Create recurring transaction
           </button>
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Number of executions:</span>A
-          service fee of 0.01 xDai is charged for each execution. This payment
+          A service fee of 0.01 xDai is charged for each execution. This payment
           will be part of the transactions you sign when you push the button.
         </div>
         <div>
-          {props.writeContractIsError &&
-            "Error when writing contract: " + props.writeContractError}
+          {writeContractIsError &&
+            "Error when writing contract: " + writeContractError}
         </div>
       </div>
     </div>

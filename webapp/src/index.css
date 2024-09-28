@@ -88,7 +88,10 @@ body {
 }
 
 .input-heading {
-  min-width: 5%;
+  min-width: 100%;
+  /* Ensure it takes full width */
+  margin-bottom: 0.2rem;
+  /* Add some space below the heading */
 }
 
 .input-heading-hidden {
@@ -101,14 +104,14 @@ body {
 }
 
 .input-container {
-  display: flex;
-  align-items: center;
+  display: block;
+  /* Change from flex to block */
   margin-top: 0.1rem;
 }
 
 .input-description {
   display: flex;
-  align-items: center;
+  align-items: left;
   margin-top: 0.4rem;
   font-size: 14px;
 }

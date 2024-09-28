@@ -64,7 +64,7 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
           )}
         </div>
         <div className="input-container">
-          <span className="input-heading">Recipient address:</span>
+          <div className="input-heading">Recipient address:</div>
           <input
             className="input-field"
             value={props.recipient}
@@ -72,17 +72,15 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Recipient address::</span>
           The address that will receive the tokens you send
         </div>
       </div>
       <div className="base-input-container">
         <div className="input-description">
-          <span className="input-heading-hidden">Amount:</span>
           {props.urlError && <span className="error">{props.urlError}</span>}
         </div>
         <div className="input-container">
-          <span className="input-heading">Amount:</span>
+          <div className="input-heading">Amount:</div>
           <input
             className="input-field"
             value={props.amount}
@@ -90,19 +88,17 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Amount:</span>
           How many tokens should be sent, in token bits.
         </div>
       </div>
       <div className="base-input-container">
         <div className="input-description">
-          <span className="input-heading-hidden">Period:</span>
           {props.amountError && (
             <span className="error">{props.amountError}</span>
           )}
         </div>
         <div className="input-container">
-          <span className="input-heading">Period:</span>
+          <div className="input-heading">Period:</div>
           <input
             className="input-field"
             value={props.period}
@@ -110,7 +106,6 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Period:</span>
           After which duration the tokens should be sent again (and again and
           again). In seconds.
         </div>
@@ -123,7 +118,7 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
           )}
         </div>
         <div className="input-container">
-          <span className="input-heading">Number of executions:</span>
+          <div className="input-heading">Number of executions:</div>
           <input
             className="input-field"
             value={props.executions}
@@ -131,7 +126,6 @@ export function CreateRecurringTransaction(props: ConfigureProfileProps) {
           />
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Number of executions:</span>
           Total number of times the transaction should be executed.
         </div>
       </div>

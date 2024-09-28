@@ -24,6 +24,7 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
   lastExecution,
   recipient,
   config,
+  token,
 }) => {
   const [isPending, setIsPending] = useState(false);
 
@@ -55,6 +56,16 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
       <td>{period.toString()}</td>
       <td>{numberOfRemainingExecutions.toString()}</td>
       <td>{lastExecution.toString()}</td>
+      {
+        // compile job status
+      }
+      <td>
+        {token === "0x0000000000000000000000000000000000000000"
+          ? "Deleted"
+          : Number(numberOfRemainingExecutions) === 0
+          ? "Completed"
+          : "Active"}
+      </td>
       <td>
         {Number(numberOfRemainingExecutions) !== 0 && (
           <button onClick={handleStop} disabled={isPending}>
@@ -198,6 +209,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
             <th>Period</th>
             <th>Remaining Executions</th>
             <th>Last Execution</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>

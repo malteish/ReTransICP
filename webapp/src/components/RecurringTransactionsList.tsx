@@ -32,7 +32,7 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
       await writeContract(config, {
         address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
         abi: recurringTransactionsSmartContract.abi,
-        functionName: "deleteJob",
+        functionName: "removeJob",
         args: [id],
       });
       alert(`Job ${id} stopped successfully.`);
@@ -51,7 +51,12 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
       <td>{numberOfRemainingExecutions.toString()}</td>
       <td>{lastExecution.toString()}</td>
       <td>
-        <button onClick={handleStop}>Stop</button>
+        <button
+          onClick={handleStop}
+          disabled={numberOfRemainingExecutions === 0}
+        >
+          Stop
+        </button>
       </td>
     </tr>
   );

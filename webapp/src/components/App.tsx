@@ -2,9 +2,9 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useConfiguration } from "../hooks/useConfiguration";
 import { CreateRecurringTransaction } from "./CreateRecurringTransaction";
 import { Info } from "./Info";
-import ShowRecurringTransactions from "./ShowRecurringTransactions";
-import { StopRecurringTransaction } from "./StopRecurringTransaction";
 import { Welcome } from "./Welcome";
+import RecurringTransactionsList from "./RecurringTransactionsList";
+import { useConfig } from "wagmi";
 
 const App = () => {
   const {
@@ -15,12 +15,7 @@ const App = () => {
     handleAmountChange,
     handleExecutionsChange,
     createConfigAndProfile,
-    profileAndKeysCreated,
-    storeEnv,
     writeContractIsPending,
-    publishProfile,
-    ensResolverFound,
-    hash,
     writeContractIsError,
     writeContractError,
     recipientError,
@@ -30,15 +25,12 @@ const App = () => {
     period,
     amount,
     executions,
-    userProfile,
-    userProfileError,
-    ensOwnershipError,
-    userEns,
-    userEnsError,
     balanceData,
     balanceIsLoading,
     balanceIsError,
   } = useConfiguration();
+
+  const config = useConfig();
 
   return (
     <div className="ds-container">
@@ -82,28 +74,12 @@ const App = () => {
           writeContractError={writeContractError}
         />
 
-        <ShowRecurringTransactions
-          ensResolverFound={ensResolverFound}
-          hash={hash}
-          userProfile={userProfile}
-          profileAndKeysCreated={profileAndKeysCreated}
-          publishProfile={publishProfile}
-          writeContractError={writeContractError}
-          writeContractIsPending={writeContractIsPending}
-          userProfileError={userProfileError}
-          ensOwnershipError={ensOwnershipError}
-          userEns={userEns}
-          userEnsError={userEnsError}
-        />
-
-        <StopRecurringTransaction
-          profileAndKeysCreated={profileAndKeysCreated}
-          storeEnv={storeEnv}
+        <RecurringTransactionsList
+          address={address}
+          isConnected={isConnected}
+          config={config}
         />
       </div>
-
-      {/* <Docker /> */}
-
       <Info />
     </div>
   );

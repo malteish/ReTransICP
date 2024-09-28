@@ -68,3 +68,4 @@ For employers that need to pay employees or similar
 Others
 
 - https://card.builtby.mom/ -> only for gnosis card safe. Unsure what they offer.
+- https://github.com/Jon-Becker/Ethereum-Recurring-Payments -> POC for subscriptions

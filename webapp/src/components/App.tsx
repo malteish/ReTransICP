@@ -6,13 +6,7 @@ import RecurringTransactionsList from "./RecurringTransactionsList";
 import { useAccount, useConfig } from "wagmi";
 
 const App = () => {
-  const {
-    address,
-    isConnected,
-    // balanceData,
-    // balanceIsLoading,
-    // balanceIsError,
-  } = useAccount();
+  const { address, isConnected } = useAccount();
   const config = useConfig();
 
   return (
@@ -20,23 +14,13 @@ const App = () => {
       <div className="main-container">
         <h1 className="ds-title">ReTransICP</h1>
 
-        {/* Rainbowkit connect button */}
         <div className="connect-btn">
           <ConnectButton />
         </div>
       </div>
 
       <div className="steps-container">
-        {/* <Welcome
-          address={address}
-          balance={
-            balanceData
-              ? balanceData.formatted + " " + balanceData.symbol
-              : "unknown in App.tsx"
-          }
-          balanceIsLoading={balanceIsLoading}
-          balanceIsError={balanceIsError}
-        /> */}
+        <Welcome />
 
         <CreateRecurringTransaction />
 

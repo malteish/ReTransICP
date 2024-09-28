@@ -1,11 +1,13 @@
-interface WelcomeProps {
-  address: `0x${string}` | undefined;
-  balance: any;
-  balanceIsLoading: boolean;
-  balanceIsError: boolean;
-}
+import { useBalance, useAccount } from "wagmi";
 
-export function Welcome(props: WelcomeProps) {
+export function Welcome() {
+  const { address } = useAccount();
+  const {
+    data: balanceData,
+    isLoading: balanceIsLoading,
+    isError: balanceIsError,
+  } = useBalance({ address });
+
   return (
     <>
       <div className="description-text">
@@ -13,11 +15,16 @@ export function Welcome(props: WelcomeProps) {
         token transfers from your address to another address. <br />
       </div>
       <div className="description-text">
-        Your address is: <b>{props.address}</b>
+        Your address is: <b>{address}</b>
         <br />
-        Your balance is: <b>{props.balance ? props.balance : "unknown"}</b>
-        {props.balanceIsLoading && <p>Loading balance...</p>}
-        {props.balanceIsError && <p>Error loading balance</p>}
+        Your balance is:{" "}
+        <b>
+          {balanceData
+            ? balanceData.formatted + " " + balanceData.symbol
+            : "unknown"}
+        </b>
+        {balanceIsLoading && <p>Loading balance...</p>}
+        {balanceIsError && <p>Error loading balance</p>}
       </div>
     </>
   );

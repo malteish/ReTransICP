@@ -3,14 +3,50 @@ import { readContract } from "wagmi/actions"; // Updated import
 import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
 import { RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS } from "../utils/constants";
 import { Config } from "wagmi";
-interface RecurringTransaction {
-  id: string;
-  recipient: string;
-  amount: string;
-  period: string;
-  executions: number;
-  nextExecution: string;
+import { ethers } from "ethers"; // Add this import
+
+interface SmartContractTransaction {
+  period: number;
+  numberOfRemainingExecutions: number;
+  amount: number;
+  lastExecution: number;
+  sender: `0x${string}`;
+  recipient: `0x${string}`;
+  token: `0x${string}`;
 }
+
+interface RecurringTransactionProps {
+  id: number;
+  amount: number;
+  period: number;
+  numberOfRemainingExecutions: number;
+  lastExecution: number;
+  sender: `0x${string}`;
+  recipient: `0x${string}`;
+  token: `0x${string}`;
+}
+
+const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
+  id,
+  amount,
+  period,
+  numberOfRemainingExecutions,
+  lastExecution,
+  sender,
+  recipient,
+  token,
+}) => {
+  return (
+    <tr>
+      <td>{id}</td>
+      <td>{recipient}</td>
+      <td>{amount}</td>
+      <td>{period}</td>
+      <td>{numberOfRemainingExecutions}</td>
+      <td>{lastExecution}</td>
+    </tr>
+  );
+};
 
 interface RecurringTransactionsListProps {
   address: `0x${string}` | undefined;
@@ -36,10 +72,10 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
   const fetchRecurringTransactions = async () => {
     setLoading(true);
     setError(null);
+    const jobsIds = [];
 
     console.log("config", config);
     try {
-      const jobs = [];
       let index = 0;
       while (true) {
         try {
@@ -54,7 +90,7 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
             // Replace `1` with your target chain ID
           );
 
-          jobs.push(jobNumber);
+          jobsIds.push(jobNumber);
           index++;
         } catch (err: any) {
           console.log(
@@ -65,10 +101,38 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
         }
       }
 
-      console.log("Jobs:", jobs);
+      console.log("JobIdss:", jobsIds);
 
       // Process jobs array to set transactions
-      // Example: setTransactions(jobs.map(job => ({ ... })));
+      for (const jobId of jobsIds) {
+        const transaction = await readContract(config, {
+          address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
+          abi: recurringTransactionsSmartContract.abi,
+          functionName: "jobs",
+          args: [jobId],
+        });
+
+        console.log("Job ID:", jobId);
+        console.log("Transaction Details:", transaction);
+
+        const smartContractTransaction =
+          transaction as SmartContractTransaction;
+
+        setTransactions((prevTransactions) => [
+          ...prevTransactions,
+          new RecurringTransaction({
+            id: jobId,
+            recipient: smartContractTransaction.recipient,
+            amount: smartContractTransaction.amount,
+            period: smartContractTransaction.period,
+            numberOfRemainingExecutions:
+              smartContractTransaction.numberOfRemainingExecutions,
+            lastExecution: smartContractTransaction.lastExecution,
+          }),
+        ]);
+      }
+
+      console.log("Loaded transactions for ", address, ":", transactions);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     } finally {
@@ -108,14 +172,15 @@ const RecurringTransactionsList: React.FC<RecurringTransactionsListProps> = ({
         </thead>
         <tbody>
           {transactions.map((tx) => (
-            <tr key={tx.id}>
-              <td>{tx.id}</td>
-              <td>{tx.recipient}</td>
-              <td>{tx.amount}</td>
-              <td>{tx.period}</td>
-              <td>{tx.executions}</td>
-              <td>{tx.nextExecution}</td>
-            </tr>
+            <RecurringTransaction
+              key={tx.id}
+              id={tx.id}
+              recipient={tx.recipient}
+              amount={tx.amount}
+              period={tx.period}
+              executions={tx.executions}
+              nextExecution={tx.nextExecution}
+            />
           ))}
         </tbody>
       </table>

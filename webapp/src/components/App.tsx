@@ -1,9 +1,8 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { CreateRecurringTransaction } from "./CreateRecurringTransaction";
 import { Info } from "./Info";
-import { Welcome } from "./Welcome";
+import { AccountInfo } from "./AccountInfo";
 import RecurringTransactionsList from "./RecurringTransactionsList";
-import { useAccount, useConfig } from "wagmi";
 
 const App = () => {
   return (
@@ -17,7 +16,7 @@ const App = () => {
       </div>
 
       <div className="steps-container">
-        <Welcome />
+        <AccountInfo />
         <CreateRecurringTransaction />
         <RecurringTransactionsList />
       </div>

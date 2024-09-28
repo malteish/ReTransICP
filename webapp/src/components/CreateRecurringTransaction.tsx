@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { useAccount, useBalance, useWriteContract } from "wagmi";
+import { useAccount, useWriteContract } from "wagmi";
 import eureTokenABI from "../contracts/EurE_v1.2.2.json";
 import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
 import {
@@ -69,17 +69,13 @@ export function CreateRecurringTransaction() {
     }
 
     const totalAmount = amountBigInt * BigInt(executions);
-    try {
-      writeContract({
-        address: EURE_SMART_CONTRACT_ADDRESS,
-        abi: eureTokenABI,
-        functionName: "approve",
-        args: [RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, totalAmount],
-      });
-    } catch (error) {
-      console.error("Error increasing approval:", error);
-      return;
-    }
+
+    writeContract({
+      address: EURE_SMART_CONTRACT_ADDRESS,
+      abi: eureTokenABI,
+      functionName: "approve",
+      args: [RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, totalAmount],
+    });
 
     writeContract({
       address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
@@ -191,7 +187,6 @@ export function CreateRecurringTransaction() {
       </div>
       <div className="base-input-container">
         <div className="input-description">
-          <span className="input-heading-hidden">Status:</span>
           {showSuccessMsg && (
             <span className="success">
               Recurring transaction created successfully!
@@ -210,8 +205,7 @@ export function CreateRecurringTransaction() {
           </button>
         </div>
         <div className="input-description">
-          <span className="input-heading-hidden">Number of executions:</span>A
-          service fee of 0.01 xDai is charged for each execution. This payment
+          A service fee of 0.01 xDai is charged for each execution. This payment
           will be part of the transactions you sign when you push the button.
         </div>
         <div>

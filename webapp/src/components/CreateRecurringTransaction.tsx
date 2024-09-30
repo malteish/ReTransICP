@@ -8,7 +8,11 @@ import {
   RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
 } from "../utils/constants";
 
-export function CreateRecurringTransaction() {
+export function CreateRecurringTransaction({
+  allowance,
+}: {
+  allowance: bigint;
+}) {
   const [recipient, setRecipient] = useState<string>("");
   const [amount, setAmount] = useState<number>();
   const [period, setPeriod] = useState<string>("");
@@ -81,11 +85,13 @@ export function CreateRecurringTransaction() {
 
     const totalAmount = amountBigInt * BigInt(executions);
 
+    const newAllowance = allowance + totalAmount;
+
     writeContract({
       address: EURE_SMART_CONTRACT_ADDRESS,
       abi: eureTokenABI,
       functionName: "approve",
-      args: [RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, totalAmount],
+      args: [RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, newAllowance],
     });
 
     writeContract({

@@ -5,7 +5,11 @@ import {
 } from "../utils/constants";
 import eureTokenABI from "../contracts/EurE_v1.2.2.json";
 
-export function AccountInfo() {
+export function AccountInfo({
+  setAllowance,
+}: {
+  setAllowance: (allowance: bigint) => void;
+}) {
   const { address } = useAccount();
   const {
     data: balanceData,
@@ -23,6 +27,11 @@ export function AccountInfo() {
     functionName: "allowance",
     args: [address, RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS],
   });
+
+  // Update allowance state in App component when allowanceData is available
+  if (allowanceData && !allowanceIsLoading && !allowanceIsError) {
+    setAllowance(BigInt(allowanceData as number)); // Assuming allowanceData is a number
+  }
 
   return (
     <>

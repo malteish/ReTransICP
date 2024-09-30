@@ -3,8 +3,10 @@ import { CreateRecurringTransaction } from "./CreateRecurringTransaction";
 import { Info } from "./Info";
 import { AccountInfo } from "./AccountInfo";
 import RecurringTransactionsList from "./RecurringTransactionsList";
+import { useState } from "react";
 
 const App = () => {
+  const [allowance, setAllowance] = useState<bigint>(BigInt(0));
   return (
     <div className="ds-container">
       <div className="main-container">
@@ -16,9 +18,9 @@ const App = () => {
       </div>
 
       <div className="steps-container">
-        <CreateRecurringTransaction />
+        <CreateRecurringTransaction allowance={allowance} />
         <RecurringTransactionsList />
-        <AccountInfo />
+        <AccountInfo setAllowance={setAllowance} />
       </div>
       <Info />
     </div>

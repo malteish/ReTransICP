@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useWriteContract, useConfig } from "wagmi";
+import { waitForTransactionReceipt } from "@wagmi/core";
 import eureTokenABI from "../contracts/EurE_v1.2.2.json";
 import recurringTransactionsSmartContract from "../contracts/RecurringTransactions.json";
 import {
   EURE_SMART_CONTRACT_ADDRESS,
   RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
 } from "../utils/constants";
+import { Config as WagmiConfig } from "@wagmi/core"; // Import the correct type
 
 export function CreateRecurringTransaction({
   allowance,
@@ -24,12 +26,15 @@ export function CreateRecurringTransaction({
   const [showSuccessMsg, setShowSuccessMsg] = useState<boolean>(false);
 
   const { isConnected, address } = useAccount();
-
+  const config = useConfig();
   const {
     writeContract,
+    writeContractAsync,
     isPending: writeContractIsPending,
     isError: writeContractIsError,
     error: writeContractError,
+    isSuccess: writeContractIsSuccess,
+    data: writeContractData,
     reset,
   } = useWriteContract();
 
@@ -87,13 +92,51 @@ export function CreateRecurringTransaction({
 
     const newAllowance = allowance + totalAmount;
 
-    writeContract({
+    reset();
+
+    console.log("Asking for signature");
+    const tx = await writeContractAsync({
       address: EURE_SMART_CONTRACT_ADDRESS,
       abi: eureTokenABI,
       functionName: "approve",
       args: [RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS, newAllowance],
     });
+    console.log("Transaction sent:", tx);
 
+    // // Wait for the transaction to be mined
+    // const receipt = await tx.wait();
+    // console.log("Transaction confirmed:", receipt);
+
+    console.log("Signature received");
+    // Wait for the transaction to be mined using the provider
+    if (tx && config) {
+      const receipt = await waitForTransactionReceipt(config as WagmiConfig, {
+        hash: tx,
+      }); // Cast config to WagmiConfig
+      console.log("Transaction confirmed:", receipt);
+    }
+
+    // while (writeContractIsPending) {
+    //   await new Promise((resolve) => setTimeout(resolve, 100));
+    //   console.log("Waiting for approve tx");
+    // }
+    // while (true) {
+    //   if (writeContractIsError) {
+    //     console.log("Approve tx failed: ", writeContractError);
+    //     return;
+    //   }
+    //   if (writeContractIsSuccess) {
+    //     console.log("Approve tx successful");
+    //     break;
+    //   }
+    //   console.log("Waiting for approve tx");
+    //   console.log("Approve tx is pending: ", writeContractIsPending);
+    //   console.log("Approve tx is success: ", writeContractIsSuccess);
+    //   console.log("Approve tx is error: ", writeContractIsError);
+    //   await new Promise((resolve) => setTimeout(resolve, 100));
+    // }
+
+    // if (writeContractIsSuccess) {
     writeContract({
       address: RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
       abi: recurringTransactionsSmartContract.abi,
@@ -107,6 +150,7 @@ export function CreateRecurringTransaction({
       ],
       value: BigInt(1e16) * BigInt(executions),
     });
+    // }
   };
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import {
 
 export function CreateRecurringTransaction() {
   const [recipient, setRecipient] = useState<string>("");
-  const [amount, setAmount] = useState<string>("");
+  const [amount, setAmount] = useState<number>();
   const [period, setPeriod] = useState<string>("");
   const [executions, setExecutions] = useState<string>("");
   const [recipientError, setRecipientError] = useState<string | null>(null);
@@ -39,8 +39,15 @@ export function CreateRecurringTransaction() {
   const handleAmountChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    setAmount(event.target.value);
-    setAmountError(null);
+    const value = event.target.value;
+    const parsedValue = parseFloat(value);
+    if (!isNaN(parsedValue)) {
+      setAmount(parsedValue * 10 ** 18);
+      setAmountError(null);
+    } else {
+      setAmount(undefined);
+      setAmountError("Invalid amount");
+    }
   };
 
   const handlePeriodChange = (
@@ -58,6 +65,10 @@ export function CreateRecurringTransaction() {
   };
 
   const createRecurringTransaction = async () => {
+    if (!amount) {
+      setAmountError("Amount is required");
+      return;
+    }
     const periodBigInt = BigInt(period);
     const amountBigInt = BigInt(amount);
     const recipientAddress = recipient;
@@ -96,7 +107,7 @@ export function CreateRecurringTransaction() {
     console.log("Account changed : ", address);
     setRecipient("");
     setPeriod("");
-    setAmount("");
+    setAmount(undefined);
     setExecutions("");
     setRecipientError(null);
     setPeriodError(null);
@@ -105,7 +116,7 @@ export function CreateRecurringTransaction() {
     reset();
   }, [address]);
 
-  const isDisabled = !isConnected || !recipient.length || !amount.length;
+  const isDisabled = !isConnected || !recipient.length || !amount;
 
   return (
     <div className="description-text step">
@@ -143,7 +154,8 @@ export function CreateRecurringTransaction() {
           <div className="input-heading">Amount:</div>
           <input
             className="input-field"
-            value={amount}
+            type="text" // Change input type to text
+            //value={amount ? amount / 10 ** 18 : ""}
             onChange={handleAmountChange}
           />
         </div>

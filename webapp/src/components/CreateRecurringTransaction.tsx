@@ -160,7 +160,7 @@ export function CreateRecurringTransaction() {
           />
         </div>
         <div className="input-description">
-          How many tokens should be sent, in token bits.
+          How many EURe tokens should be sent.
         </div>
       </div>
       <div className="base-input-container">

@@ -52,7 +52,9 @@ const RecurringTransaction: React.FC<RecurringTransactionProps> = ({
     <tr>
       <th scope="row">{id.toString()}</th>
       <td aria-label="Recipient">{recipient}</td>
-      <td aria-label="Amount">{amount.toString()}</td>
+      <td aria-label="Amount">
+        {(Number(amount) / Math.pow(10, 18)).toFixed(18)}
+      </td>
       <td aria-label="Period">{period.toString()}</td>
       <td aria-label="Remaining Executions">
         {numberOfRemainingExecutions.toString()}

@@ -27,8 +27,7 @@ export function AccountInfo() {
   return (
     <>
       <div className="description-text">
-        You can use this web app to create, display or delete recurring ERC20
-        token transfers from your address to another address. <br />
+        <h2 className="heading-text">Account Info</h2>
       </div>
       <div className="description-text">
         Your address is: <b>{address}</b>

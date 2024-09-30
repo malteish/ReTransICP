@@ -16,9 +16,9 @@ const App = () => {
       </div>
 
       <div className="steps-container">
-        <AccountInfo />
         <CreateRecurringTransaction />
         <RecurringTransactionsList />
+        <AccountInfo />
       </div>
       <Info />
     </div>

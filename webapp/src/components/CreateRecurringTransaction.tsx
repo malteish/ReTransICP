@@ -9,6 +9,7 @@ import {
   RECURRING_TRANSACTIONS_SMART_CONTRACT_ADDRESS,
 } from "../utils/constants";
 import { Config as WagmiConfig } from "@wagmi/core"; // Import the correct type
+import BigNumber from "bignumber.js";
 
 export function CreateRecurringTransaction({
   allowance,
@@ -16,7 +17,7 @@ export function CreateRecurringTransaction({
   allowance: bigint;
 }) {
   const [recipient, setRecipient] = useState<string>("");
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<bigint>();
   const [period, setPeriod] = useState<string>("");
   const [executions, setExecutions] = useState<string>("");
   const [recipientError, setRecipientError] = useState<string | null>(null);
@@ -49,11 +50,19 @@ export function CreateRecurringTransaction({
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     const value = event.target.value;
-    const parsedValue = parseFloat(value);
-    if (!isNaN(parsedValue)) {
-      setAmount(parsedValue * 10 ** 18);
-      setAmountError(null);
-    } else {
+    try {
+      const parsedValue = new BigNumber(value);
+      if (!parsedValue.isNaN()) {
+        const valueBigInt = parsedValue
+          .multipliedBy(new BigNumber(10).pow(18))
+          .toFixed(0);
+        setAmount(BigInt(valueBigInt));
+        setAmountError(null);
+      } else {
+        setAmount(undefined);
+        setAmountError("Invalid amount");
+      }
+    } catch (error) {
       setAmount(undefined);
       setAmountError("Invalid amount");
     }
@@ -115,26 +124,6 @@ export function CreateRecurringTransaction({
       }); // Cast config to WagmiConfig
       console.log("Transaction confirmed:", receipt);
     }
-
-    // while (writeContractIsPending) {
-    //   await new Promise((resolve) => setTimeout(resolve, 100));
-    //   console.log("Waiting for approve tx");
-    // }
-    // while (true) {
-    //   if (writeContractIsError) {
-    //     console.log("Approve tx failed: ", writeContractError);
-    //     return;
-    //   }
-    //   if (writeContractIsSuccess) {
-    //     console.log("Approve tx successful");
-    //     break;
-    //   }
-    //   console.log("Waiting for approve tx");
-    //   console.log("Approve tx is pending: ", writeContractIsPending);
-    //   console.log("Approve tx is success: ", writeContractIsSuccess);
-    //   console.log("Approve tx is error: ", writeContractIsError);
-    //   await new Promise((resolve) => setTimeout(resolve, 100));
-    // }
 
     // if (writeContractIsSuccess) {
     writeContract({

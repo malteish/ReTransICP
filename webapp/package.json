@@ -13,6 +13,7 @@
     "@types/react-dom": "^18.3.0",
     "@wagmi/core": "latest",
     "axios": "^1.7.2",
+    "bignumber.js": "^9.1.2",
     "buffer": "npm:buffer@6.0.3",
     "ethers": "^6.13.1",
     "react": "^18.3.0",

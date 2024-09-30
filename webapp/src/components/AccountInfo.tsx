@@ -54,7 +54,7 @@ export function AccountInfo({
         many of your EURe tokens:{" "}
         <b>
           {!allowanceIsLoading && !allowanceIsError
-            ? (allowanceData as number).toString() // Assuming allowanceData is a number
+            ? (Number(allowanceData) / Math.pow(10, 18)).toFixed(18).toString() // Assuming allowanceData is a number
             : "loading..."}
         </b>
       </div>

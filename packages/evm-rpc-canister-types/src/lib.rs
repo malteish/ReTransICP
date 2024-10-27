@@ -178,14 +178,15 @@ pub enum MultiFeeHistoryResult {
 #[derive(CandidType, Deserialize, Debug, Clone)]
 pub struct Block {
     pub miner: String,
-    pub totalDifficulty: candid::Nat,
+    pub totalDifficulty: Option<candid::Nat>,
     pub receiptsRoot: String,
     pub stateRoot: String,
     pub hash: String,
-    pub difficulty: candid::Nat,
+    pub difficulty: Option<candid::Nat>,
     pub size: candid::Nat,
     pub uncles: Vec<String>,
-    pub baseFeePerGas: candid::Nat,
+    // here
+    pub baseFeePerGas: Option<candid::Nat>,
     pub extraData: String,
     pub transactionsRoot: Option<String>,
     pub sha3Uncles: String,

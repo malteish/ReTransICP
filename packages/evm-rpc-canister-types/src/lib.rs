@@ -185,7 +185,6 @@ pub struct Block {
     pub difficulty: Option<candid::Nat>,
     pub size: candid::Nat,
     pub uncles: Vec<String>,
-    // here
     pub baseFeePerGas: Option<candid::Nat>,
     pub extraData: String,
     pub transactionsRoot: Option<String>,

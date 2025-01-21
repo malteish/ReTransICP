@@ -62,10 +62,10 @@ pub enum RpcServices {
     EthMainnet(Option<Vec<EthMainnetService>>),
 }
 
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(Clone, Debug, PartialEq, Eq, Default, CandidType, Deserialize)]
 pub struct RpcConfig {
     pub responseSizeEstimate: Option<u64>,
-    pub response_consensus: Option<ConsensusStrategy>,
+    pub responseConsensus: Option<ConsensusStrategy>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, CandidType, Deserialize)]
@@ -424,6 +424,7 @@ impl EvmRpcCanister {
         arg2: BlockTag,
         cycles: u128,
     ) -> Result<(MultiGetBlockByNumberResult,)> {
+        ic_cdk::println!("Calling eth_get_block_by_number. CONFIG: {:?}", arg1);
         call_with_payment128(self.0, "eth_getBlockByNumber", (arg0, arg1, arg2), cycles).await
     }
     pub async fn eth_get_logs(

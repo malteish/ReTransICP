@@ -46,10 +46,11 @@ pub struct RpcApi {
 #[derive(CandidType, Deserialize, Debug, Clone)]
 pub enum EthMainnetService {
     Alchemy,
-    BlockPi,
-    Cloudflare,
-    PublicNode,
     Ankr,
+    BlockPi,
+    PublicNode,
+    Cloudflare,
+    Llama,
 }
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
@@ -179,14 +180,13 @@ pub enum FeeHistoryResult {
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
 pub enum RpcService {
-    EthSepolia(EthSepoliaService),
-    BaseMainnet(L2MainnetService),
-    Custom(RpcApi),
-    OptimismMainnet(L2MainnetService),
-    ArbitrumOne(L2MainnetService),
-    EthMainnet(EthMainnetService),
-    Chain(u64),
     Provider(u64),
+    Custom(RpcApi),
+    EthMainnet(EthMainnetService),
+    EthSepolia(EthSepoliaService),
+    ArbitrumOne(L2MainnetService),
+    BaseMainnet(L2MainnetService),
+    OptimismMainnet(L2MainnetService),
 }
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
@@ -221,13 +221,13 @@ pub struct Block {
     pub mixHash: String,
 }
 
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(CandidType, Deserialize, Clone)]
 pub enum GetBlockByNumberResult {
     Ok(Block),
     Err(RpcError),
 }
 
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(CandidType, Deserialize, Clone)]
 pub enum MultiGetBlockByNumberResult {
     Consistent(GetBlockByNumberResult),
     Inconsistent(Vec<(RpcService, GetBlockByNumberResult)>),

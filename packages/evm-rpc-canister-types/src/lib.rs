@@ -46,10 +46,11 @@ pub struct RpcApi {
 #[derive(CandidType, Deserialize, Debug, Clone)]
 pub enum EthMainnetService {
     Alchemy,
-    BlockPi,
-    Cloudflare,
-    PublicNode,
     Ankr,
+    BlockPi,
+    PublicNode,
+    Cloudflare,
+    Llama,
 }
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
@@ -62,9 +63,29 @@ pub enum RpcServices {
     EthMainnet(Option<Vec<EthMainnetService>>),
 }
 
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(Clone, Debug, PartialEq, Eq, Default, CandidType, Deserialize)]
 pub struct RpcConfig {
     pub responseSizeEstimate: Option<u64>,
+    pub responseConsensus: Option<ConsensusStrategy>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Default, CandidType, Deserialize)]
+pub enum ConsensusStrategy {
+    /// All providers must return the same non-error result.
+    #[default]
+    Equality,
+
+    /// A subset of providers must return the same non-error result.
+    Threshold {
+        /// Total number of providers to be queried:
+        /// * If `None`, will be set to the number of providers manually specified in `RpcServices`.
+        /// * If `Some`, must correspond to the number of manually specified providers in `RpcServices`;
+        ///   or if they are none indicating that default providers should be used, select the corresponding number of providers.
+        total: Option<u8>,
+
+        /// Minimum number of providers that must return the same (non-error) result.
+        min: u8,
+    },
 }
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
@@ -159,14 +180,13 @@ pub enum FeeHistoryResult {
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
 pub enum RpcService {
-    EthSepolia(EthSepoliaService),
-    BaseMainnet(L2MainnetService),
-    Custom(RpcApi),
-    OptimismMainnet(L2MainnetService),
-    ArbitrumOne(L2MainnetService),
-    EthMainnet(EthMainnetService),
-    Chain(u64),
     Provider(u64),
+    Custom(RpcApi),
+    EthMainnet(EthMainnetService),
+    EthSepolia(EthSepoliaService),
+    ArbitrumOne(L2MainnetService),
+    BaseMainnet(L2MainnetService),
+    OptimismMainnet(L2MainnetService),
 }
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
@@ -201,13 +221,13 @@ pub struct Block {
     pub mixHash: String,
 }
 
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(CandidType, Deserialize, Clone)]
 pub enum GetBlockByNumberResult {
     Ok(Block),
     Err(RpcError),
 }
 
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(CandidType, Deserialize, Clone)]
 pub enum MultiGetBlockByNumberResult {
     Consistent(GetBlockByNumberResult),
     Inconsistent(Vec<(RpcService, GetBlockByNumberResult)>),
@@ -404,6 +424,7 @@ impl EvmRpcCanister {
         arg2: BlockTag,
         cycles: u128,
     ) -> Result<(MultiGetBlockByNumberResult,)> {
+        ic_cdk::println!("Calling eth_get_block_by_number. CONFIG: {:?}", arg1);
         call_with_payment128(self.0, "eth_getBlockByNumber", (arg0, arg1, arg2), cycles).await
     }
     pub async fn eth_get_logs(

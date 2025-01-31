@@ -20,7 +20,8 @@ use state::{read_state, State};
 use crate::state::{initialize_state, mutate_state};
 use execute_job::execute_jobs;
 
-pub const SCRAPING_LOGS_INTERVAL: Duration = Duration::from_secs(15 * 60);
+// how often to become active: once a day
+pub const SCRAPING_LOGS_INTERVAL: Duration = Duration::from_secs(60 * 60 * 24);
 
 fn setup_timers() {
     let key_id = read_state(State::key_id);
